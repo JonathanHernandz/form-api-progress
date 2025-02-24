@@ -1,13 +1,15 @@
 import * as yup from "yup";
 import { Formik, Form, Field } from "formik";
 import { useState } from "react";
-
+const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 const FormQuoteSchema = yup.object().shape({
   name: yup.string().required("Debe ingresar su nombre."),
   email: yup
     .string()
     .email("Ingrese un correo valido.")
     .required("Debe ingresar un correo."),
+    number: yup.string().matches(phoneRegExp, 'Número de teléfono no válido').required('Debe ingresar un número de teléfono.').min(10, "too short")
+    .max(10, "too long"),
   quantity: yup.number().moreThan(0).required("Debe especificar la cantidad."),
   deliveryType: yup.string().required("Debe elegir un tipo de entrega"),
   tyc: yup.boolean().oneOf([true], "Debe aceptar los términos y condiciones.")
@@ -21,6 +23,7 @@ export const FormQuote = () => {
       initialValues={{
         name: "",
         email: "",
+        number: "",
         quantity: "",
         deliveryType: "",
         tyc: false
@@ -106,7 +109,7 @@ export const FormQuote = () => {
           </p>
           <hr className="mt-2" />
           <div className="columns">
-            <div className="column">
+            {/* <div className="column">
               <div className="field">
                 <label htmlFor="quantity" className="label">
                   Cantidad de productos
@@ -126,7 +129,7 @@ export const FormQuote = () => {
                   <p className="help is-danger">{errors.quantity}</p>
                 )}
               </div>
-            </div>
+            </div> */}
             <div className="column">
               <div className="field">
                 <label htmlFor="deliveryType" className="label">
@@ -138,7 +141,7 @@ export const FormQuote = () => {
                     <option value="delivery">Delivery</option>
                     <option value="pickup">Recojo en tienda</option>
                   </Field>
-                  {/* <select
+                  {/* <select  //YA ESTABA COMENTADO
                     id="deliveryType"
                     value={values.deliveryType}
                     name="deliveryType"
