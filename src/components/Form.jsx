@@ -1,6 +1,7 @@
 import * as yup from "yup";
 import { Formik, Form, Field } from "formik";
 import { useState } from "react";
+import { handleSubmit } from "../handleSubmit";
 const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 const FormQuoteSchema = yup.object().shape({
   name: yup.string().required("Debe ingresar su nombre."),
@@ -29,13 +30,15 @@ export const FormQuote = () => {
         tyc: false
       }}
       validationSchema={FormQuoteSchema}
-      onSubmit={(values, formikProps) => {
-        setTimeout(() => {
-          console.log(values);
-          setSuccess(true);
-          formikProps.resetForm();
-        }, 3000);
-      }}
+      // onSubmit={(values, formikProps) => {
+      //   setTimeout(() => {
+      //     console.log(values);
+      //     setSuccess(true);
+      //     formikProps.resetForm();
+        
+      //   }, 3000);
+      // }}
+      onSubmit={(values, formikProps) => handleSubmit(values, formikProps, setSuccess)}
     >
       {({
         values,
