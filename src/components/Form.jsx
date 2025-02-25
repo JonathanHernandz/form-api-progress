@@ -10,8 +10,8 @@ const FormQuoteSchema = yup.object().shape({
     .required("Debe ingresar un correo."),
     number: yup.string().matches(phoneRegExp, 'Número de teléfono no válido').required('Debe ingresar un número de teléfono.').min(10, "too short")
     .max(10, "too long"),
-  quantity: yup.number().moreThan(0).required("Debe especificar la cantidad."),
-  deliveryType: yup.string().required("Debe elegir un tipo de entrega"),
+  //quantity: yup.number().moreThan(0).required("Debe especificar la cantidad."),
+  //deliveryType: yup.string().required("Debe elegir un tipo de entrega"),
   tyc: yup.boolean().oneOf([true], "Debe aceptar los términos y condiciones.")
 });
 
@@ -24,8 +24,8 @@ export const FormQuote = () => {
         name: "",
         email: "",
         number: "",
-        quantity: "",
-        deliveryType: "",
+        //quantity: "",
+        //deliveryType: "",
         tyc: false
       }}
       validationSchema={FormQuoteSchema}
@@ -53,7 +53,7 @@ export const FormQuote = () => {
             </div>
           )}
           <p className="is-4 has-text-grey has-text-weight-bold">
-            Información de contacto
+            Información
           </p>
           <hr className="mt-2" />
 
@@ -104,11 +104,39 @@ export const FormQuote = () => {
             </div>
           </div>
 
-          <p className="is-4 has-text-grey has-text-weight-bold mb-0 mt-5">
+          <div className="columns">
+            <div className="column">
+              <div className="field">
+                <label htmlFor="number" className="label">
+                  Numero de teléfono
+                </label>
+                <div className="control">
+                  <Field id="number" name="number" type="input" className="input" />
+                  {/* <input
+                    id="name"
+                    type="text"
+                    name="name"
+                    className="input"
+                    value={values.name}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  /> */}
+                </div>
+                {touched.number && errors.number && (
+                  <p className="help is-danger">{errors.number}</p>
+                )}
+              </div>
+            </div>
+          </div>
+          
+          
+
+
+          {/* <p className="is-4 has-text-grey has-text-weight-bold mb-0 mt-5">
             Información adicional
           </p>
-          <hr className="mt-2" />
-          <div className="columns">
+          <hr className="mt-2" /> */}
+          {/* <div className="columns"> */}
             {/* <div className="column">
               <div className="field">
                 <label htmlFor="quantity" className="label">
@@ -130,7 +158,7 @@ export const FormQuote = () => {
                 )}
               </div>
             </div> */}
-            <div className="column">
+            {/* <div className="column">
               <div className="field">
                 <label htmlFor="deliveryType" className="label">
                   Tipo de entrega
@@ -141,7 +169,7 @@ export const FormQuote = () => {
                     <option value="delivery">Delivery</option>
                     <option value="pickup">Recojo en tienda</option>
                   </Field>
-                  {/* <select  //YA ESTABA COMENTADO
+                  {/* <select  // * YA ESTABA COMENTADO
                     id="deliveryType"
                     value={values.deliveryType}
                     name="deliveryType"
@@ -151,14 +179,14 @@ export const FormQuote = () => {
                     <option value="">Seleccionar</option>
                     <option value="delivery">Delivery</option>
                     <option value="pickup">Recojo en tienda</option>
-                  </select> */}
+                  </select> 
                 </div>
                 {touched.deliveryType && errors.deliveryType && (
                   <p className="help is-danger">{errors.deliveryType}</p>
                 )}
               </div>
-            </div>
-          </div>
+            </div> */}
+          {/* </div> */}
           <hr className="mt-2" />
 
           <label className="checkbox">
@@ -181,7 +209,7 @@ export const FormQuote = () => {
               }`.trim()}
               type="submit"
             >
-              Enviar cotización
+              Aceptar
             </button>
           </div>
         </Form>
