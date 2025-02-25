@@ -45,7 +45,7 @@ export const FormQuote = () => {
         touched,
         isSubmitting
       }) => (
-        <Form>
+        <Form >
           {success && (
             <div className="notification is-success is-light">
               <strong>¡Gracias por enviar tu solicitud!</strong> Nuestro equipo
@@ -57,8 +57,8 @@ export const FormQuote = () => {
           </p>
           <hr className="mt-2" />
 
-          <div className="columns">
-            <div className="column">
+          <div className="">
+            <div className="">
               <div className="field">
                 <label htmlFor="name" className="label">
                   Nombre
@@ -81,7 +81,7 @@ export const FormQuote = () => {
               </div>
             </div>
 
-            <div className="column">
+            <div className="">
               <div className="field">
                 <label htmlFor="email" className="label">
                   Correo
