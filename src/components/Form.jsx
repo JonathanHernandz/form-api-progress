@@ -13,6 +13,7 @@ const FormQuoteSchema = yup.object().shape({
     .max(10, "too long"),
   //quantity: yup.number().moreThan(0).required("Debe especificar la cantidad."),
   //deliveryType: yup.string().required("Debe elegir un tipo de entrega"),
+  birthdate: yup.date().required("Debe ingresar su fecha de nacimiento."),
   tyc: yup.boolean().oneOf([true], "Debe aceptar los términos y condiciones.")
 });
 
@@ -27,6 +28,7 @@ export const FormQuote = () => {
         number: "",
         //quantity: "",
         //deliveryType: "",
+        birthdate: "",
         tyc: false
       }}
       validationSchema={FormQuoteSchema}
@@ -131,6 +133,30 @@ export const FormQuote = () => {
               </div>
             </div>
           </div>
+
+          <div className="columns">
+            <div className="column">
+              <div className="field">
+                <label htmlFor="birthdate" className="label">
+                  Fecha de nacimiento
+                </label>
+                <div className="control">
+                  <Field
+                    id="birthdate"
+                    name="birthdate"
+                    type="date"
+                    className="input"
+                    max={new Date().toISOString().split("T")[0]} // Restringe fechas futuras
+                    onFocus={(e) => e.target.showPicker && e.target.showPicker()} // Abre el selector al hacer clic
+                  />
+                </div>
+                {touched.birthdate && errors.birthdate && (
+                  <p className="help is-danger">{errors.birthdate}</p>
+                )}
+              </div>
+            </div>
+          </div>
+
           
           
 

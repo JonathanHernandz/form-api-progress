@@ -8,7 +8,7 @@ function App() {
   return (
     <>
       <h1 className="title has-text-success has-text-centered">
-        Formulario MissHelados
+        Formulario MiisHelados
       </h1>
       <div className="container" style={{ width: 600 }}>
         <div className="columns">
