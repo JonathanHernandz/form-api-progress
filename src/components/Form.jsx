@@ -1,7 +1,10 @@
 import * as yup from "yup";
 import { Formik, Form, Field } from "formik";
-import { useState } from "react";
+import { use, useRef, useState } from "react";
 import { handleSubmit } from "../handleSubmit";
+import ReCAPTCHA from "react-google-recaptcha";
+
+
 const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 const FormQuoteSchema = yup.object().shape({
   name: yup.string().required("Debe ingresar su nombre."),
@@ -9,16 +12,22 @@ const FormQuoteSchema = yup.object().shape({
     .string()
     .email("Ingrese un correo valido.")
     .required("Debe ingresar un correo."),
-    number: yup.string().matches(phoneRegExp, 'Número de teléfono no válido').required('Debe ingresar un número de teléfono.').min(10, "too short")
+  number: yup.string().matches(phoneRegExp, 'Número de teléfono no válido').required('Debe ingresar un número de teléfono.').min(10, "too short")
     .max(10, "too long"),
   //quantity: yup.number().moreThan(0).required("Debe especificar la cantidad."),
   //deliveryType: yup.string().required("Debe elegir un tipo de entrega"),
   birthdate: yup.date().required("Debe ingresar su fecha de nacimiento."),
-  tyc: yup.boolean().oneOf([true], "Debe aceptar los términos y condiciones.")
+  tyc: yup.boolean().oneOf([true], "Debe aceptar los términos y condiciones."),
 });
 
 export const FormQuote = () => {
   const [success, setSuccess] = useState(false);
+
+
+  const onChange = () => {
+      console.log("Captcha ok");
+  };
+
 
   return (
     <Formik
@@ -29,7 +38,7 @@ export const FormQuote = () => {
         //quantity: "",
         //deliveryType: "",
         birthdate: "",
-        tyc: false
+        tyc: false,
       }}
       validationSchema={FormQuoteSchema}
       // onSubmit={(values, formikProps) => {
@@ -37,10 +46,13 @@ export const FormQuote = () => {
       //     console.log(values);
       //     setSuccess(true);
       //     formikProps.resetForm();
-        
+
       //   }, 3000);
       // }}
-      onSubmit={(values, formikProps) => handleSubmit(values, formikProps, setSuccess)}
+      onSubmit={(values, formikProps) => {
+
+        handleSubmit(values, formikProps, setSuccess)
+      }}
     >
       {({
         values,
@@ -48,9 +60,9 @@ export const FormQuote = () => {
         handleBlur,
         errors,
         touched,
-        isSubmitting
+        isSubmitting,
       }) => (
-        <Form >
+        <Form>
           {success && (
             <div className="notification is-success is-light">
               <strong>¡Gracias por enviar tu solicitud!</strong> Nuestro equipo
@@ -62,15 +74,17 @@ export const FormQuote = () => {
           </p>
           <hr className="mt-2" />
 
-          <div className="">
-            <div className="">
-              <div className="field">
-                <label htmlFor="name" className="label">
-                  Nombre
-                </label>
-                <div className="control">
-                  <Field id="name" name="name" type="input" className="input" />
-                  {/* <input
+          <div className="columns is-multiline">
+          </div>
+
+          <div className="column is_fullwidth is-12-mobile is-6-tablet is-12-desktop">
+            <div className="field">
+              <label htmlFor="name" className="label">
+                Nombre
+              </label>
+              <div className="control">
+                <Field id="name" name="name" type="input" className="input" />
+                {/* <input
                     id="name"
                     type="text"
                     name="name"
@@ -79,44 +93,38 @@ export const FormQuote = () => {
                     onChange={handleChange}
                     onBlur={handleBlur}
                   /> */}
-                </div>
-                {touched.name && errors.name && (
-                  <p className="help is-danger">{errors.name}</p>
-                )}
               </div>
+              {touched.name && errors.name && (
+                <p className="help is-danger">{errors.name}</p>
+              )}
+            </div>
+            <div className="field">
+              <label htmlFor="email" className="label">
+                Correo
+              </label>
+              <div className="control ">
+                <input
+                  id="email"
+                  type="email"
+                  name="email"
+                  className="input"
+                  value={values.email}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                />
+              </div>
+              {touched.email && errors.email && (
+                <p className="help is-danger">{errors.email}</p>
+              )}
             </div>
 
-            <div className="">
-              <div className="field">
-                <label htmlFor="email" className="label">
-                  Correo
-                </label>
-                <div className="control">
-                  <input
-                    id="email"
-                    type="email"
-                    name="email"
-                    className="input"
-                    value={values.email}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
-                </div>
-                {touched.email && errors.email && (
-                  <p className="help is-danger">{errors.email}</p>
-                )}
-              </div>
-            </div>
-          </div>
 
-          <div className="columns">
-            <div className="column">
               <div className="field">
                 <label htmlFor="number" className="label">
                   Numero de teléfono
                 </label>
                 <div className="control">
-                  <Field id="number" name="number" type="input" className="input" />
+                  <Field id="number" name="number" type="input" className="input " />
                   {/* <input
                     id="name"
                     type="text"
@@ -131,12 +139,10 @@ export const FormQuote = () => {
                   <p className="help is-danger">{errors.number}</p>
                 )}
               </div>
-            </div>
-          </div>
+              
 
-          <div className="columns">
-            <div className="column">
-              <div className="field">
+
+              <div className="field ">
                 <label htmlFor="birthdate" className="label">
                   Fecha de nacimiento
                 </label>
@@ -145,7 +151,7 @@ export const FormQuote = () => {
                     id="birthdate"
                     name="birthdate"
                     type="date"
-                    className="input"
+                    className="input "
                     max={new Date().toISOString().split("T")[0]} // Restringe fechas futuras
                     onFocus={(e) => e.target.showPicker && e.target.showPicker()} // Abre el selector al hacer clic
                   />
@@ -154,11 +160,10 @@ export const FormQuote = () => {
                   <p className="help is-danger">{errors.birthdate}</p>
                 )}
               </div>
-            </div>
+
+
           </div>
 
-          
-          
 
 
           {/* <p className="is-4 has-text-grey has-text-weight-bold mb-0 mt-5">
@@ -166,7 +171,7 @@ export const FormQuote = () => {
           </p>
           <hr className="mt-2" /> */}
           {/* <div className="columns"> */}
-            {/* <div className="column">
+          {/* <div className="column">
               <div className="field">
                 <label htmlFor="quantity" className="label">
                   Cantidad de productos
@@ -187,7 +192,7 @@ export const FormQuote = () => {
                 )}
               </div>
             </div> */}
-            {/* <div className="column">
+          {/* <div className="column">
               <div className="field">
                 <label htmlFor="deliveryType" className="label">
                   Tipo de entrega
@@ -231,11 +236,24 @@ export const FormQuote = () => {
               <p className="help is-danger">{errors.tyc}</p>
             )}
           </label>
+          <div className="is-flex is-justify-content-center mt-4">
+         
+                <ReCAPTCHA
+                    sitekey="6Lc-pvEqAAAAAMljUFGofBPeAmo07F2GFYUDiyVE"
+                    onChange={onChange}
+                />
+
+
+
+            
+          </div>
+
+
+          
           <div className="mt-4 is-flex is-justify-content-flex-end">
             <button
-              className={`button is-success ${
-                isSubmitting ? "is-loading" : ""
-              }`.trim()}
+              className={`button is-success ${isSubmitting ? "is-loading" : ""
+                }`.trim()}
               type="submit"
             >
               Aceptar
