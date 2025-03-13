@@ -1,6 +1,6 @@
 import * as yup from "yup";
 import { Formik, Form, Field } from "formik";
-import { use, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { handleSubmit } from "../handleSubmit";
 import ReCAPTCHA from "react-google-recaptcha";
 
@@ -18,15 +18,26 @@ const FormQuoteSchema = yup.object().shape({
   //deliveryType: yup.string().required("Debe elegir un tipo de entrega"),
   birthdate: yup.date().required("Debe ingresar su fecha de nacimiento."),
   tyc: yup.boolean().oneOf([true], "Debe aceptar los términos y condiciones."),
+  recaptcha: yup.string().required("Debe verificar el CAPTCHA."),
+  //recaptcha: yup.string().required("Debe verificar el CAPTCHA.")
 });
 
 export const FormQuote = () => {
   const [success, setSuccess] = useState(false);
+  const [captchaError, setCaptchaError] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const recaptchaRef = useRef(null);
 
-
-  const onChange = () => {
-      console.log("Captcha ok");
-  };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (recaptchaRef.current?.getValue() === null) {
+        setCaptchaError(true);
+        setIsSubmitting(false); // Evitar que el botón quede en estado de carga
+      }
+    }, 5000);
+    return () => clearInterval(interval);
+    }, []);
 
 
   return (
@@ -39,6 +50,7 @@ export const FormQuote = () => {
         //deliveryType: "",
         birthdate: "",
         tyc: false,
+        recaptcha: "",
       }}
       validationSchema={FormQuoteSchema}
       // onSubmit={(values, formikProps) => {
@@ -50,8 +62,14 @@ export const FormQuote = () => {
       //   }, 3000);
       // }}
       onSubmit={(values, formikProps) => {
-
-        handleSubmit(values, formikProps, setSuccess)
+        if (!recaptchaRef.current?.getValue()) {
+          setCaptchaError(true);
+          setIsSubmitting(false);
+          return;
+        }
+        setIsSubmitting(true);
+        console.log("Valores enviados:", values); // Agregar esta línea para depurar
+        handleSubmit(values, formikProps, setSuccess, setIsSubmitting, recaptchaRef);
       }}
     >
       {({
@@ -60,7 +78,6 @@ export const FormQuote = () => {
         handleBlur,
         errors,
         touched,
-        isSubmitting,
       }) => (
         <Form>
           {success && (
@@ -165,62 +182,6 @@ export const FormQuote = () => {
           </div>
 
 
-
-          {/* <p className="is-4 has-text-grey has-text-weight-bold mb-0 mt-5">
-            Información adicional
-          </p>
-          <hr className="mt-2" /> */}
-          {/* <div className="columns"> */}
-          {/* <div className="column">
-              <div className="field">
-                <label htmlFor="quantity" className="label">
-                  Cantidad de productos
-                </label>
-                <div className="control">
-                  <input
-                    id="quantity"
-                    type="number"
-                    name="quantity"
-                    className="input"
-                    value={values.quantity}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  />
-                </div>
-                {touched.quantity && errors.quantity && (
-                  <p className="help is-danger">{errors.quantity}</p>
-                )}
-              </div>
-            </div> */}
-          {/* <div className="column">
-              <div className="field">
-                <label htmlFor="deliveryType" className="label">
-                  Tipo de entrega
-                </label>
-                <div className="select">
-                  <Field id="deliveryType" name="deliveryType" as="select">
-                    <option value="">Seleccionar</option>
-                    <option value="delivery">Delivery</option>
-                    <option value="pickup">Recojo en tienda</option>
-                  </Field>
-                  {/* <select  // * YA ESTABA COMENTADO
-                    id="deliveryType"
-                    value={values.deliveryType}
-                    name="deliveryType"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                  >
-                    <option value="">Seleccionar</option>
-                    <option value="delivery">Delivery</option>
-                    <option value="pickup">Recojo en tienda</option>
-                  </select> 
-                </div>
-                {touched.deliveryType && errors.deliveryType && (
-                  <p className="help is-danger">{errors.deliveryType}</p>
-                )}
-              </div>
-            </div> */}
-          {/* </div> */}
           <hr className="mt-2" />
 
           <label className="checkbox">
@@ -236,17 +197,84 @@ export const FormQuote = () => {
               <p className="help is-danger">{errors.tyc}</p>
             )}
           </label>
-          <div className="is-flex is-justify-content-center mt-4">
+          {/* <div className="is-flex is-justify-content-center mt-4">
          
                 <ReCAPTCHA
                     sitekey="6Lc-pvEqAAAAAMljUFGofBPeAmo07F2GFYUDiyVE"
-                    onChange={onChange}
+                    onChange={handleRecaptchaChange}
                 />
 
 
 
             
-          </div>
+          </div> */}
+          {/* {captchaError && <p className="help is-danger">Debe verificar el CAPTCHA.</p>} */}
+
+          {/* <Field name="recaptcha">
+          {({ field, form }) => (
+            <>
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                sitekey="6Lc-pvEqAAAAAMljUFGofBPeAmo07F2GFYUDiyVE"
+                onChange={(value) => {
+                  setCaptchaError(false);
+                }}
+                onExpired={() => {
+                  setCaptchaError(true);
+                  setIsSubmitting(false);
+                }}
+              />
+              {form.touched.recaptcha && form.errors.recaptcha && (
+                <p className="help is-danger">{form.errors.recaptcha}</p>
+              )}
+            </>
+          )}
+        </Field>  */}
+
+
+          {/* <div className="is-flex is-justify-content-center mt-4">
+            <ReCAPTCHA
+              ref={recaptchaRef}
+              sitekey="6Lc-pvEqAAAAAMljUFGofBPeAmo07F2GFYUDiyVE"
+              onChange={(value) => {
+                setCaptchaError(false);
+              }}
+              onExpired={() => {
+                setCaptchaError(true);
+                setIsSubmitting(false);
+              }}
+            />
+            {captchaError && <p className="help is-danger">Debe verificar el CAPTCHA.</p>} 
+            
+          </div> */}
+
+          <Field name="recaptcha">
+            {({ form }) => (
+              <div className="is-flex is-flex-direction-column is-align-items-center is-justify-content-center mt-4">
+                <div>
+                  <ReCAPTCHA
+                    ref={recaptchaRef}
+                    sitekey="6Lc-pvEqAAAAAMljUFGofBPeAmo07F2GFYUDiyVE"
+                    onChange={(value) => {
+                      form.setFieldValue("recaptcha", value);
+                      setCaptchaError(false);
+                    }}
+                    onExpired={() => {
+                      form.setFieldValue("recaptcha", "");
+                      setCaptchaError(true);
+                      setIsSubmitting(false);
+                    }}
+                  />
+
+                </div>
+                
+                {(captchaError || (form.touched.recaptcha && form.errors.recaptcha)) && (
+                    <p className="help is-danger">Debe verificar el CAPTCHA.</p>
+                )}
+              </div>
+            )}
+          </Field>
+          
 
 
           
@@ -255,6 +283,7 @@ export const FormQuote = () => {
               className={`button is-success ${isSubmitting ? "is-loading" : ""
                 }`.trim()}
               type="submit"
+              //disabled={isSubmitting}
             >
               Aceptar
             </button>
