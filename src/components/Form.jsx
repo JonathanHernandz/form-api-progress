@@ -7,16 +7,13 @@ import ReCAPTCHA from "react-google-recaptcha";
 
 const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 const FormQuoteSchema = yup.object().shape({
-  name: yup.string().required("Debe ingresar su nombre."),
-  email: yup
-    .string()
-    .email("Ingrese un correo valido.")
-    .required("Debe ingresar un correo."),
-  number: yup.string().matches(phoneRegExp, 'Número de teléfono no válido').required('Debe ingresar un número de teléfono.').min(10, "too short")
+  NOM_1ENTE: yup.string().required("Debe ingresar su nombre."),
+  NOM_2ENTE: yup.string().required("Debe ingresar su nombre."),
+  NUM_TELEN1: yup.string().matches(phoneRegExp, 'Número de teléfono no válido').required('Debe ingresar un número de teléfono.').min(10, "too short")
     .max(10, "too long"),
   //quantity: yup.number().moreThan(0).required("Debe especificar la cantidad."),
   //deliveryType: yup.string().required("Debe elegir un tipo de entrega"),
-  birthdate: yup.date().required("Debe ingresar su fecha de nacimiento."),
+  FEC_NAENT: yup.date().required("Debe ingresar su fecha de nacimiento."),
   tyc: yup.boolean().oneOf([true], "Debe aceptar los términos y condiciones."),
   recaptcha: yup.string().required("Debe verificar el CAPTCHA."),
   //recaptcha: yup.string().required("Debe verificar el CAPTCHA.")
@@ -43,12 +40,12 @@ export const FormQuote = () => {
   return (
     <Formik
       initialValues={{
-        name: "",
-        email: "",
-        number: "",
+        NOM_1ENTE: "",
+        NOM_2ENTE: "",
+        NUM_TELEN1: "",
         //quantity: "",
         //deliveryType: "",
-        birthdate: "",
+        FEC_NAENT: "",
         tyc: false,
         recaptcha: "",
       }}
@@ -96,11 +93,11 @@ export const FormQuote = () => {
 
           <div className="column is_fullwidth is-12-mobile is-6-tablet is-12-desktop">
             <div className="field">
-              <label htmlFor="name" className="label">
-                Nombre
+              <label htmlFor="NOM_1ENTE" className="label">
+                Nombre 1
               </label>
               <div className="control">
-                <Field id="name" name="name" type="input" className="input" />
+                <Field id="NOM_1ENTE" name="NOM_1ENTE" type="input" className="input" />
                 {/* <input
                     id="name"
                     type="text"
@@ -111,37 +108,38 @@ export const FormQuote = () => {
                     onBlur={handleBlur}
                   /> */}
               </div>
-              {touched.name && errors.name && (
-                <p className="help is-danger">{errors.name}</p>
+              {touched.NOM_1ENTE && errors.NOM_1ENTE && (
+                <p className="help is-danger">{errors.NOM_1ENTE}</p>
               )}
             </div>
+            
             <div className="field">
-              <label htmlFor="email" className="label">
-                Correo
+              <label htmlFor="NOM_2ENTE" className="label">
+                Nombre 2
               </label>
-              <div className="control ">
-                <input
-                  id="email"
-                  type="email"
-                  name="email"
-                  className="input"
-                  value={values.email}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                />
+              <div className="control">
+                <Field id="NOM_2ENTE" name="NOM_2ENTE" type="input" className="input" />
+                {/* <input
+                    id="name"
+                    type="text"
+                    name="name"
+                    className="input"
+                    value={values.name}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  /> */}
               </div>
-              {touched.email && errors.email && (
-                <p className="help is-danger">{errors.email}</p>
+              {touched.NOM_2ENTE && errors.NOM_2ENTE && (
+                <p className="help is-danger">{errors.NOM_2ENTE}</p>
               )}
             </div>
-
 
               <div className="field">
-                <label htmlFor="number" className="label">
+                <label htmlFor="NUM_TELEN1" className="label">
                   Numero de teléfono
                 </label>
                 <div className="control">
-                  <Field id="number" name="number" type="input" className="input " />
+                  <Field id="NUM_TELEN1" name="NUM_TELEN1" type="input" className="input " />
                   {/* <input
                     id="name"
                     type="text"
@@ -152,29 +150,29 @@ export const FormQuote = () => {
                     onBlur={handleBlur}
                   /> */}
                 </div>
-                {touched.number && errors.number && (
-                  <p className="help is-danger">{errors.number}</p>
+                {touched.NUM_TELEN1 && errors.NUM_TELEN1 && (
+                  <p className="help is-danger">{errors.NUM_TELEN1}</p>
                 )}
               </div>
               
 
 
               <div className="field ">
-                <label htmlFor="birthdate" className="label">
+                <label htmlFor="FEC_NAENT" className="label">
                   Fecha de nacimiento
                 </label>
                 <div className="control">
                   <Field
-                    id="birthdate"
-                    name="birthdate"
+                    id="FEC_NAENT"
+                    name="FEC_NAENT"
                     type="date"
                     className="input "
                     max={new Date().toISOString().split("T")[0]} // Restringe fechas futuras
                     onFocus={(e) => e.target.showPicker && e.target.showPicker()} // Abre el selector al hacer clic
                   />
                 </div>
-                {touched.birthdate && errors.birthdate && (
-                  <p className="help is-danger">{errors.birthdate}</p>
+                {touched.FEC_NAENT && errors.FEC_NAENT && (
+                  <p className="help is-danger">{errors.FEC_NAENT}</p>
                 )}
               </div>
 
@@ -273,11 +271,8 @@ export const FormQuote = () => {
                 )}
               </div>
             )}
-          </Field>
-          
+          </Field>          
 
-
-          
           <div className="mt-4 is-flex is-justify-content-flex-end">
             <button
               className={`button is-success ${isSubmitting ? "is-loading" : ""
