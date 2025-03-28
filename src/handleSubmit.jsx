@@ -21,22 +21,24 @@ import axios from "axios";
 
 export const handleSubmit = async (values, formikProps, setSuccess, setIsSubmitting, recaptchaRef) => {
     console.log(values);
+    // Convertir el objeto values a formato x-www-form-urlencoded
+    const formData = new URLSearchParams();
+    Object.keys(values).forEach(key => {
+        formData.append(key, values[key]);
+    });
+
     try {
         const response = await axios.post(
             "https://webmicfx.arashi.solutions/FGR/WsAjaxCoClien", 
-            JSON.stringify(values), // Convertir a JSON
+            formData, // Enviar los datos en formato URL encoded
             {
                 headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json"
-                },
-                mode: "cors" // Asegurar que la solicitud use CORS
-
-                
+                    "Content-Type": "application/x-www-form-urlencoded"
+                }
             }
         );
 
-        console.log("Datos guardados:", response.data);
+        console.log("Datos guardados:", response);
         setSuccess(true);
         formikProps.resetForm();
         recaptchaRef.current.reset();
@@ -47,4 +49,3 @@ export const handleSubmit = async (values, formikProps, setSuccess, setIsSubmitt
         setIsSubmitting(false);
     }
 };
-
