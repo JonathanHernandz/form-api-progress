@@ -22,27 +22,24 @@ import axios from "axios";
 export const handleSubmit = async (values, formikProps, setSuccess, setIsSubmitting, recaptchaRef) => {
     console.log(values);
 
-    // Convertir el objeto values a una cadena HTML en formato <p>clave: valor</p>
-    const htmlData = `
-        <html>
-            <body>
-                ${Object.entries(values).map(([key, value]) => `<p>${key}: ${value}</p>`).join("")}
-            </body>
-        </html>
-    `;
+    // Convertir el objeto values a formato x-www-form-urlencoded
+    const formData = new URLSearchParams();
+    Object.keys(values).forEach(key => {
+        formData.append(key, values[key]);
+    });
 
     try {
         const response = await axios.post(
             "https://webmicfx.arashi.solutions/FGR/WsAjaxCoClien", 
-            htmlData, 
+            formData, // Enviar los datos en formato URL encoded
             {
                 headers: {
-                    "Content-Type": "application/html" 
+                    "Content-Type": "application/x-www-form-urlencoded"
                 }
             }
         );
 
-        console.log("Datos guardados:", response);
+        console.log("Datos guardados:", response.data);
         setSuccess(true);
         formikProps.resetForm();
         recaptchaRef.current.reset();
