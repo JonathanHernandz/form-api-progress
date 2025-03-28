@@ -37,12 +37,12 @@ export const handleSubmit = async (values, formikProps, setSuccess, setIsSubmitt
             htmlData, 
             {
                 headers: {
-                    "Content-Type": "application/html" // Se usa text/html
+                    "Content-Type": "application/html" 
                 }
             }
         );
 
-        console.log("Datos guardados:", response.data);
+        console.log("Datos guardados:", response);
         setSuccess(true);
         formikProps.resetForm();
         recaptchaRef.current.reset();
